@@ -8,25 +8,23 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Build APK with Kivy Docker
         run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk
-          pip install --upgrade pip
-          pip install buildozer cython
-
-      - name: Build APK
-        run: buildozer android debug
+          docker run --rm \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            -e BUILDOZER_ANDROID_ACCEPT_SDK_LICENSE=1 \
+            ghcr.io/kivy/kivy:master \
+            bash -c "
+              apt-get update
+              pip install buildozer cython
+              buildozer android debug
+            "
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
