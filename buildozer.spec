@@ -9,7 +9,8 @@ source.include_exts = py,png,jpg,kv,atlas,ttf
 source.exclude_exts = pyc,pyo,so,dylib,o,obj,exe,spec
 source.exclude_dirs = tests,bin,libs,venv,.git
 
-requirements = python3,kivy==2.2.1,requests,pillow
+# Простые зависимости без KivyMD
+requirements = python3,kivy,requests,pillow
 
 orientation = portrait
 fullscreen = 0
