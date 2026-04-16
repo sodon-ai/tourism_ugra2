@@ -13,21 +13,29 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build APK with Kivy Docker
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          docker run --rm \
-            -v $(pwd):/workspace \
-            -w /workspace \
-            -e BUILDOZER_ANDROID_ACCEPT_SDK_LICENSE=1 \
-            ghcr.io/kivy/kivy:master \
-            bash -c "
-              apt-get update
-              pip install buildozer cython
-              buildozer android debug
-            "
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk libc6 libstdc++6
+          pip install --upgrade pip
+          pip install buildozer cython
+
+      - name: Clean previous builds
+        run: |
+          rm -rf .buildozer
+          rm -rf bin
+
+      - name: Build APK
+        run: buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ugratour-apk
           path: ./bin/*.apk
+          if-no-files-found: ignore
