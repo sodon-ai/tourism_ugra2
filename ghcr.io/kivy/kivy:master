@@ -1,0 +1,29 @@
+# This workflow builds a Kivy application using Docker
+
+name: Build Kivy Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        run: |
+          docker pull kivy/kivy:latest
+
+      - name: Build Kivy application
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/app kivy/kivy:latest /bin/bash -c 'cd /app && python setup.py build'
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: kivy-build
+          path: build/
